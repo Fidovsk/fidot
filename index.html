@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Академия Здоровья - Медицинская клиника</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .doctor-card:hover {
+            transform: scale(1.03);
+        }
+        
+        .avatar {
+            width: 100%;
+            height: 256px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .avatar-1 { background-color: #3B82F6; } /* blue-500 */
+        .avatar-2 { background-color: #10B981; } /* emerald-500 */
+        .avatar-3 { background-color: #F59E0B; } /* amber-500 */
+        .avatar-4 { background-color: #8B5CF6; } /* violet-500 */
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-heartbeat text-blue-600 text-3xl mr-2"></i>
+                <h1 class="text-2xl font-bold text-blue-800">Академия Здоровья</h1>
+            </div>
+            
+            <button id="mobile-menu-button" class="md:hidden text-blue-800">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="#home" class="text-blue-800 hover:text-blue-600 font-medium">Главная</a>
+                <a href="#services" class="text-blue-800 hover:text-blue-600 font-medium">Услуги</a>
+                <a href="#doctors" class="text-blue-800 hover:text-blue-600 font-medium">Врачи</a>
+                <a href="#about" class="text-blue-800 hover:text-blue-600 font-medium">О нас</a>
+                <a href="#contact" class="text-blue-800 hover:text-blue-600 font-medium">Контакты</a>
+            </nav>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="#home" class="block py-2 text-blue-800 hover:text-blue-600">Главная</a>
+            <a href="#services" class="block py-2 text-blue-800 hover:text-blue-600">Услуги</a>
+            <a href="#doctors" class="block py-2 text-blue-800 hover:text-blue-600">Врачи</a>
+            <a href="#about" class="block py-2 text-blue-800 hover:text-blue-600">О нас</a>
+            <a href="#contact" class="block py-2 text-blue-800 hover:text-blue-600">Контакты</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero text-white py-20 md:py-32">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Академия Здоровья </h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">Современная медицинская помощь с заботой о каждом пациенте</p>
+            <a href="#contact" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 inline-block">Записаться на прием</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-blue-800 mb-12">Наши услуги</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service Card 1 -->
+                <div class="service-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 cursor-pointer" data-service="therapy">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-stethoscope text-blue-600 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-blue-800">Терапия</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">Комплексная диагностика и лечение заболеваний внутренних органов.</p>
+                        <button class="text-blue-600 font-medium flex items-center">
+                            Подробнее <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Service Card 2 -->
+                <div class="service-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 cursor-pointer" data-service="cardiology">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-heartbeat text-blue-600 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-blue-800">Кардиология</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">Диагностика и лечение заболеваний сердечно-сосудистой системы.</p>
+                        <button class="text-blue-600 font-medium flex items-center">
+                            Подробнее <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Service Card 3 -->
+                <div class="service-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 cursor-pointer" data-service="neurology">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-brain text-blue-600 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-blue-800">Неврология</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">Лечение заболеваний нервной системы и реабилитация.</p>
+                        <button class="text-blue-600 font-medium flex items-center">
+                            Подробнее <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Doctors Section -->
+    <section id="doctors" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-blue-800 mb-12">Наши врачи</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Doctor Card 1 -->
+                <div class="doctor-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 cursor-pointer" data-doctor="doctor1">
+                    <div class="avatar avatar-1">АМ</div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-blue-800 mb-1">Алиев Магомед Рашидович</h3>
+                        <p class="text-blue-600 font-medium mb-3">Кардиолог</p>
+                        <p class="text-gray-600 text-sm">Врач высшей категории, стаж 18 лет</p>
+                        <button class="mt-4 text-blue-600 font-medium flex items-center">
+                            Подробнее <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                 <!-- Doctor Card 2 -->
+                 <div class="doctor-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 cursor-pointer" data-doctor="doctor2">
+                    <div class="avatar avatar-2">ЛЦ</div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-blue-800 mb-1">Цечоева Лиана Султановна</h3>
+                        <p class="text-blue-600 font-medium mb-3">Невролог</p>
+                        <p class="text-gray-600 text-sm">Кандидат медицинских наук, стаж 12 лет</p>
+                        <button class="mt-4 text-blue-600 font-medium flex items-center">
+                            Подробнее <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Doctor Card 3 -->
+                <div class="doctor-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 cursor-pointer" data-doctor="doctor3">
+                    <div class="avatar avatar-3">СЕ</div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-blue-800 mb-1">Евлоев Султан Ахмедович</h3>
+                        <p class="text-blue-600 font-medium mb-3">Терапевт</p>
+                        <p class="text-gray-600 text-sm">Врач высшей категории, стаж 22 года</p>
+                        <button class="mt-4 text-blue-600 font-medium flex items-center">
+                            Подробнее <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Doctor Card 4 -->
+                <div class="doctor-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 cursor-pointer" data-doctor="doctor4">
+                    <div class="avatar avatar-4">АБ</div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-blue-800 mb-1">Барахоева Амина Магомедовна</h3>
+                        <p class="text-blue-600 font-medium mb-3">Педиатр</p>
+                        <p class="text-gray-600 text-sm">Врач первой категории, стаж 9 лет</p>
+                        <button class="mt-4 text-blue-600 font-medium flex items-center">
+                            Подробнее <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                    <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         alt="Клиника Академия Здоровья" 
+                         class="rounded-lg shadow-lg w-full h-auto">
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl font-bold text-blue-800 mb-6">О нашей клинике</h2>
+                    <p class="text-gray-700 mb-4">Академия Здоровья - это современный медицинский центр в Назрани, где работают высококвалифицированные специалисты с многолетним опытом.</p>
+                    <p class="text-gray-700 mb-4">Мы предлагаем комплексный подход к диагностике и лечению, используя современное оборудование и индивидуальный подход к каждому пациенту.</p>
+                    <p class="text-gray-700 mb-6">Наша миссия - сделать качественную медицинскую помощь доступной для жителей Назрани и Республики Ингушетия.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center bg-blue-50 px-4 py-2 rounded-full">
+                            <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                            <span class="text-blue-800">Современное оборудование</span>
+                        </div>
+                        <div class="flex items-center bg-blue-50 px-4 py-2 rounded-full">
+                            <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                            <span class="text-blue-800">Опытные врачи</span>
+                        </div>
+                        <div class="flex items-center bg-blue-50 px-4 py-2 rounded-full">
+                            <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+                            <span class="text-blue-800">Индивидуальный подход</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-16 bg-blue-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-blue-800 mb-12">Отзывы пациентов</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-start mb-4">
+                        <div>
+                            <h4 class="font-bold text-blue-800">Ибрагим Кодзоев</h4>
+                            <div class="flex text-yellow-400 mb-1">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-sm text-gray-500">Лечился у кардиолога Алиева М.Р.</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">"Очень благодарен доктору Алиеву за профессиональный подход. После курса лечения чувствую себя значительно лучше. Клиника оснащена современным оборудованием, персонал внимательный и вежливый."</p>
+                    <p class="text-sm text-gray-500 mt-4">12 февраля 2025</p>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-start mb-4">
+                        <div>
+                            <h4 class="font-bold text-blue-800">Мадина Аушева</h4>
+                            <div class="flex text-yellow-400 mb-1">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <p class="text-sm text-gray-500">Лечила ребенка у педиатра Барахоевой А.М.</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">"Доктор Барахоева - прекрасный специалист! Нашла подход к моему ребенку, который обычно боится врачей. Назначенное лечение помогло быстро, теперь только к ней обращаемся. Спасибо за чуткость и профессионализм!"</p>
+                    <p class="text-sm text-gray-500 mt-4">3 мая 2025</p>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-start mb-4">
+                        <div>
+                            <h4 class="font-bold text-blue-800">Зарема Мальсагова</h4>
+                            <div class="flex text-yellow-400 mb-1">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-sm text-gray-500">Проходила лечение у невролога Цечоевой Л.С.</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">"Страдала от сильных головных болей много лет. Доктор Цечоева провела тщательное обследование, назначила лечение, которое действительно помогло. Персонал клиники очень внимательный, записаться на прием легко, очередей нет."</p>
+                    <p class="text-sm text-gray-500 mt-4">25 апреля 2025</p>
+                </div>
+            </div>
+            
+            <!-- Testimonials Navigation -->
+            <div class="flex justify-center mt-8 space-x-2">
+                <button class="w-3 h-3 rounded-full bg-blue-600"></button>
+                <button class="w-3 h-3 rounded-full bg-blue-200"></button>
+                <button class="w-3 h-3 rounded-full bg-blue-200"></button>
+            </div>
+            
+            <!-- Add Testimonial Button -->
+            <div class="text-center mt-8">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition duration-300 inline-flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Оставить отзыв
+                </button>
+            </div>
+        </div>
+    </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-blue-800 mb-12">Контакты</h2>
+            
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="md:w-1/2 bg-blue-50 p-8 rounded-lg">
+                    <h3 class="text-2xl font-bold text-blue-800 mb-6">Наши контакты</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-blue-800">Адрес</h4>
+                                <p class="text-gray-700">г. Назрань, ул. Московская, 123</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <i class="fas fa-phone-alt text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-blue-800">Телефон</h4>
+                                <p class="text-gray-700">+7 (8732) 12-34-56</p>
+                                <p class="text-gray-700">+7 (928) 123-45-67</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <i class="fas fa-envelope text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-blue-800">Email</h4>
+                                <p class="text-gray-700">info@akademiya-zdorovya.ru</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <i class="fas fa-clock text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-blue-800">Часы работы</h4>
+                                <p class="text-gray-700">Пн-Пт: 8:00 - 20:00</p>
+                                <p class="text-gray-700">Сб: 9:00 - 18:00</p>
+                                <p class="text-gray-700">Вс: 9:00 - 15:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h4 class="font-bold text-blue-800 mb-4">Мы в социальных сетях</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition duration-300">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition duration-300">
+                                <i class="fab fa-vk"></i>
+                            </a>
+                            <a href="#" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition duration-300">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                            <a href="#" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition duration-300">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2">
+                    <h3 class="text-2xl font-bold text-blue-800 mb-6">Записаться на прием</h3>
+                    <form class="space-y-4">
+                        <div>
+                            <label for="name" class="block text-gray-700 font-medium mb-1">Ваше имя</label>
+                            <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label for="phone" class="block text-gray-700 font-medium mb-1">Телефон</label>
+                            <input type="tel" id="phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label for="service" class="block text-gray-700 font-medium mb-1">Услуга</label>
+                            <select id="service" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Выберите услугу</option>
+                                <option value="therapy">Терапия</option>
+                                <option value="cardiology">Кардиология</option>
+                                <option value="neurology">Неврология</option>
+                                <option value="pediatrics">Педиатрия</option>
+                                <option value="ultrasound">УЗИ диагностика</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="date" class="block text-gray-700 font-medium mb-1">Желаемая дата</label>
+                            <input type="date" id="date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label for="message" class="block text-gray-700 font-medium mb-1">Сообщение (необязательно)</label>
+                            <textarea id="message" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 w-full">Отправить заявку</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <div class="h-96 w-full">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2906.780770105576!2d44.76401531548399!3d43.22817997913796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4051d4e1e0a1283f%3A0x5a1d5a1a1a1a1a1a!2z0JzQsNC30LXRgNC40L3QsdGD0YDQsywg0JjQvdGB0YLQuNGC0YPRgiDQkdC10L3RhtC40YHRgtC40LrQuA!5e0!3m2!1sru!2sru!4v1620000000000!5m2!1sru!2sru" 
+                width="100%" 
+                height="100%" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy"
+                class="filter grayscale-50 contrast-125"></iframe>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-blue-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center">
+                        <i class="fas fa-heartbeat text-white text-3xl mr-2"></i>
+                        <h2 class="text-2xl font-bold">Академия Здоровья</h2>
+                    </div>
+                    <p class="mt-2 text-blue-200">Качественная медицинская помощь в Назрани</p>
+                </div>
+                
+                <div class="flex flex-col items-center md:items-end">
+                    <p class="text-blue-200 mb-2">© 2025 Академия Здоровья. Все права защищены.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-blue-200 hover:text-white transition duration-300">Политика конфиденциальности</a>
+                        <a href="#" class="text-blue-200 hover:text-white transition duration-300">Лицензии</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальное окно для подстраниц -->
+    <div id="subpage-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <div class="flex justify-between items-center">
+                                <h3 id="subpage-title" class="text-2xl leading-6 font-bold text-blue-800"></h3>
+                                <button id="close-subpage" class="text-gray-400 hover:text-gray-500">
+                                    <i class="fas fa-times text-2xl"></i>
+                                </button>
+                            </div>
+                            <div class="mt-4">
+                                <div id="subpage-content" class="text-gray-700"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button id="close-subpage-btn" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Закрыть
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // Subpage functionality
+        const subpageModal = document.getElementById('subpage-modal');
+        const subpageTitle = document.getElementById('subpage-title');
+        const subpageContent = document.getElementById('subpage-content');
+        const closeSubpageButtons = [document.getElementById('close-subpage'), document.getElementById('close-subpage-btn')];
+        
+        // Subpages data
+        const subpages = {
+            'therapy': {
+                title: 'Терапия',
+                content: `
+                    <div class="space-y-4">
+                        <p>Терапевтическое отделение нашей клиники предоставляет комплексную диагностику и лечение широкого спектра заболеваний внутренних органов.</p>
+                        <p class="font-medium">Основные направления:</p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>Лечение ОРВИ, гриппа и других инфекционных заболеваний</li>
+                            <li>Диагностика и лечение заболеваний ЖКТ</li>
+                            <li>Лечение заболеваний дыхательной системы</li>
+                            <li>Диагностика и лечение эндокринных нарушений</li>
+                            <li>Профилактические осмотры и диспансеризация</li>
+                        </ul>
+                        <div class="bg-blue-50 p-4 rounded-lg mt-4">
+                            <p class="font-medium text-blue-800">Прием ведут:</p>
+                            <p class="mt-1">- Врач-терапевт высшей категории с опытом работы 15 лет</p>
+                            <p>- Кандидат медицинских наук</p>
+                        </div>
+                    </div>
+                `
+            },
+            'cardiology': {
+                title: 'Кардиология',
+                content: `
+                    <div class="space-y-4">
+                        <p>Кардиологическое отделение оснащено современным оборудованием для диагностики и лечения заболеваний сердца и сосудов.</p>
+                        <p class="font-medium">Мы предлагаем:</p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>ЭКГ и холтеровское мониторирование</li>
+                            <li>Эхокардиографию (УЗИ сердца)</li>
+                            <li>Нагрузочные тесты (велоэргометрия)</li>
+                            <li>Лечение ишемической болезни сердца</li>
+                            <li>Реабилитацию после инфарктов и операций</li>
+                        </ul>
+                        <div class="bg-blue-50 p-4 rounded-lg mt-4">
+                            <p class="font-medium text-blue-800">Стоимость услуг:</p>
+                            <p class="mt-1">- Консультация кардиолога: 1 500 руб.</p>
+                            <p>- ЭКГ с расшифровкой: 800 руб.</p>
+                            <p>- УЗИ сердца: 2 000 руб.</p>
+                        </div>
+                    </div>
+                `
+            },
+            'neurology': {
+                title: 'Неврология',
+                content: `
+                    <div class="space-y-4">
+                        <p>Наши неврологи специализируются на диагностике и лечении заболеваний нервной системы.</p>
+                        <p class="font-medium">Основные направления работы:</p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>Лечение остеохондроза и болей в спине</li>
+                            <li>Диагностика и лечение головных болей</li>
+                            <li>Реабилитация после инсультов</li>
+                            <li>Лечение неврологических осложнений диабета</li>
+                            <li>Электронейромиография (ЭНМГ)</li>
+                        </ul>
+                        <div class="bg-blue-50 p-4 rounded-lg mt-4">
+                            <p class="text-blue-800 font-medium">Запишитесь на прием, если вас беспокоят:</p>
+                            <p class="mt-1">- Головные боли, головокружения</p>
+                            <p>- Боли в спине и конечностях</p>
+                            <p>- Нарушения чувствительности</p>
+                            <p>- Слабость в мышцах</p>
+                        </div>
+                    </div>
+                `
+            }
+        };
+        
+        // Function to open subpage
+        function openSubpage(pageId) {
+            if (subpages[pageId]) {
+                subpageTitle.textContent = subpages[pageId].title;
+                subpageContent.innerHTML = subpages[pageId].content;
+                subpageModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        // Function to close subpage
+        function closeSubpage() {
+            subpageModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal handlers
+        closeSubpageButtons.forEach(button => {
+            button.addEventListener('click', closeSubpage);
+        });
+        
+        // Close modal when clicking outside content
+        subpageModal.addEventListener('click', (e) => {
+            if (e.target === subpageModal) {
+                closeSubpage();
+            }
+        });
+        
+        // Add event listeners to service cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const serviceId = card.getAttribute('data-service');
+                    openSubpage(serviceId);
+                });
+            });
+        });
+
+        // Doctors data
+        const doctors = {
+            'doctor1': {
+                name: 'Алиев Магомед Рашидович',
+                specialty: 'Кардиолог',
+                image: '',
+                content: `
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/3">
+                            <div class="avatar avatar-1 w-full h-64">АМ</div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h4 class="text-xl font-bold text-blue-800 mb-2">Алиев Магомед Рашидович</h4>
+                            <p class="text-blue-600 font-medium mb-4">Кардиолог высшей категории</p>
+                             <div class="space-y-4">
+                                <div>
+                                    <p class="font-medium">Образование:</p>
+                                    <p>Ростовский государственный медицинский университет, 2002 г.</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Специализация:</p>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li>Ишемическая болезнь сердца</li>
+                                        <li>Артериальная гипертензия</li>
+                                        <li>Сердечная недостаточность</li>
+                                        <li>Реабилитация после инфаркта</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Стаж работы:</p>
+                                    <p>18 лет</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Достижения:</p>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li>Автор 12 научных публикаций</li>
+                                        <li>Участник международных кардиологических конференций</li>
+                                        <li>Разработал методику ранней диагностики ИБС</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'doctor2': {
+                name: 'Цечоева Лиана Султановна',
+                specialty: 'Невролог',
+                image: '',
+                content: `
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/3">
+                            <div class="avatar avatar-2 w-full h-64">ЛЦ</div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h4 class="text-xl font-bold text-blue-800 mb-2">Цечоева Лиана Султановна</h4>
+                            <p class="text-blue-600 font-medium mb-4">Невролог, кандидат медицинских наук</p>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="font-medium">Образование:</p>
+                                    <p>Московская медицинская академия им. И.М. Сеченова, 2008 г.</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Специализация:</p>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li>Лечение мигрени и головных болей</li>
+                                        <li>Реабилитация после инсультов</li>
+                                        <li>Лечение остеохондроза</li>
+                                        <li>Эпилептология</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Стаж работы:</p>
+                                    <p>12 лет</p>
+                                     </div>
+                                
+                                <div>
+                                    <p class="font-medium">Дополнительная информация:</p>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li>Прошла стажировку в Германии (2015 г.)</li>
+                                        <li>Автор методики реабилитации после инсультов</li>
+                                        <li>Член Российского общества неврологов</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'doctor3': {
+                name: 'Евлоев Султан Ахмедович',
+                specialty: 'Терапевт',
+                image: '',
+                content: `
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/3">
+                            <div class="avatar avatar-3 w-full h-64">СЕ</div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h4 class="text-xl font-bold text-blue-800 mb-2">Евлоев Султан Ахмедович</h4>
+                             <p class="text-blue-600 font-medium mb-4">Терапевт высшей категории</p>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="font-medium">Образование:</p>
+                                    <p>Дагестанская государственная медицинская академия, 1999 г.</p>
+                                    <p class="mt-1">Интернатура по терапии в ГКБ №1 г. Назрань</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Специализация:</p>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li>Лечение заболеваний дыхательной системы</li>
+                                        <li>Гастроэнтерология</li>
+                                        <li>Эндокринные нарушения</li>
+                                        <li>Диагностика сложных клинических случаев</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Стаж работы:</p>
+                                    <p>22 года</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Профессиональные достижения:</p>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li>Главный терапевт Республики Ингушетия (2010-2015 гг.)</li>
+                                        <li>Награжден знаком "Отличник здравоохранения РФ"</li>
+                                        <li>Организатор школы здоровья для пожилых пациентов</li>
+                                        <li>Автор 8 методических рекомендаций по терапии</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <p class="font-medium text-blue-800">Принимает:</p>
+                                    <p class="mt-1">Пн, Ср, Пт: 8:00 - 14:00</p>
+                                    <p>Вт, Чт: 14:00 - 20:00</p>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'doctor4': {
+                name: 'Барахоева Амина Магомедовна',
+                specialty: 'Педиатр',
+                image: '',
+                content: `
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/3">
+                            <div class="avatar avatar-4 w-full h-64">АБ</div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h4 class="text-xl font-bold text-blue-800 mb-2">Барахоева Амина Магомедовна</h4>
+                            <p class="text-blue-600 font-medium mb-4">Педиатр первой категории</p>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="font-medium">Образование:</p>
+                                    <p>Северо-Осетинская государственная медицинская академия, 2012 г.</p>
+                                     <p class="mt-1">Ординатура по педиатрии в ДГКБ г. Владикавказ</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Специализация:</p>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li>Вакцинопрофилактика</li>
+                                        <li>Неонатология (наблюдение детей до 1 года)</li>
+                                        <li>Лечение ОРВИ и детских инфекций</li>
+                                        <li>Аллергология детского возраста</li>
+                                        <li>Питание и развитие детей раннего возраста</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Стаж работы:</p>
+                                    <p>9 лет</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Дополнительное образование:</p>
+                                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                                        <li>Сертификат по детской аллергологии (2018 г.)</li>
+                                        <li>Курс по грудному вскармливанию (2019 г.)</li>
+                                        <li>Участник всероссийских педиатрических конференций</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-medium">Подход к работе:</p>
+                                    <p>"В своей практике я уделяю особое внимание профилактике заболеваний и созданию доверительных отношений с маленькими пациентами и их родителями. Считаю, что лечение должно быть не только эффективным, но и комфортным для ребенка."</p>
+                                </div>
+                                
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <p class="font-medium text-blue-800">График приема:</p>
+                                    <p class="mt-1">Пн-Пт: 9:00 - 18:00</p>
+                                    <p>Сб: 10:00 - 15:00 (по предварительной записи)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        };
+         // Добавляем обработчики для карточек врачей
+         document.addEventListener('DOMContentLoaded', () => {
+            // Для услуг
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const serviceId = card.getAttribute('data-service');
+                    openSubpage(serviceId);
+                });
+            });
+
+            // Для врачей
+            const doctorCards = document.querySelectorAll('.doctor-card');
+            doctorCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const doctorId = card.getAttribute('data-doctor');
+                    if (doctors[doctorId]) {
+                        subpageTitle.textContent = `${doctors[doctorId].name} - ${doctors[doctorId].specialty}`;
+                        subpageContent.innerHTML = doctors[doctorId].content;
+                        subpageModal.classList.remove('hidden');
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+            });
+        });
+        // Добавлен скрипт для обработки отзывов
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработка кнопки "Оставить отзыв"
+            const addTestimonialBtn = document.querySelector('.bg-blue-600.hover\\:bg-blue-700');
+            if (addTestimonialBtn) {
+                addTestimonialBtn.addEventListener('click', function() {
+                    // Здесь можно добавить логику для открытия формы добавления отзыва
+                    alert('Форма для добавления отзыва будет открыта. В реальном проекте здесь будет модальное окно с формой.');
+                });
+            }
+            
+            // Обработка навигации по отзывам
+            const testimonialDots = document.querySelectorAll('.flex.justify-center.mt-8 button');
+            testimonialDots.forEach((dot, index) => {
+                dot.addEventListener('click', function() {
+                    // Здесь можно добавить логику для переключения отзывов
+                    testimonialDots.forEach(d => d.classList.replace('bg-blue-600', 'bg-blue-200'));
+                    this.classList.replace('bg-blue-200', 'bg-blue-600');
+                    console.log('Показать отзыв', index + 1);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
