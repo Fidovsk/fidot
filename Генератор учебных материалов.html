@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Умные Карточки - Генератор учебных материалов</title>
+    <meta name="description" content="Преобразуйте конспекты в карточки для запоминания и тесты">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        secondary: "#10B981",
+                        accent: "#F59E0B"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .flashcard {
+            perspective: 1000px;
+            height: 200px;
+        }
+        .flashcard-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+            height: 100%;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.3s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 font-sans antialiased">
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <nav class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="text-2xl font-bold text-primary flex items-center mb-4 md:mb-0">
+                <i class="fas fa-graduation-cap mr-2"></i>
+                <span>Умные Карточки</span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 md:gap-6">
+                <a href="#" class="text-gray-600 hover:text-primary transition flex items-center">
+                    <i class="fas fa-home mr-1"></i> Главная
+                </a>
+                <a href="#" class="text-gray-600 hover:text-primary transition flex items-center">
+                    <i class="fas fa-question-circle mr-1"></i> Как это работает
+                </a>
+                <a href="#" class="text-gray-600 hover:text-primary transition flex items-center">
+                    <i class="fas fa-info-circle mr-1"></i> О проекте
+                </a>
+                <a href="#" class="text-gray-600 hover:text-primary transition flex items-center">
+                    <i class="fas fa-envelope mr-1"></i> Контакты
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Приветственный блок -->
+        <div class="bg-gradient-to-r from-primary to-secondary text-white rounded-xl p-6 mb-8 shadow-lg">
+            <h1 class="text-3xl font-bold mb-4">Создавайте эффективные учебные материалы</h1>
+            <p class="text-lg opacity-90">Преобразуйте ваши конспекты в карточки для запоминания, тесты и ключевые термины всего в один клик!</p>
+        </div>
+
+        <!-- Основной рабочий блок -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Блок ввода -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-800">Ваш конспект</h2>
+                        <div class="flex items-center space-x-2">
+                            <button id="clear-btn" class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition">
+                                <i class="fas fa-trash-alt mr-1"></i> Очистить
+                            </button>
+                            <button id="sample-btn" class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition">
+                                <i class="fas fa-lightbulb mr-1"></i> Пример
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <textarea 
+                        id="notes" 
+                        rows="12"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                        placeholder="Вставьте сюда текст лекции или конспекта..."></textarea>
+                    
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <button id="analyze-btn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90 transition flex items-center">
+                            <i class="fas fa-search mr-2"></i> Анализировать
+                        </button>
+                        <button id="generate-btn" class="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-opacity-90 transition flex items-center">
+                            <i class="fas fa-magic mr-2"></i> Сгенерировать
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Статистика -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Статистика</h2>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">Обработано текста</span>
+                            <span id="text-length" class="text-sm font-medium text-gray-500">0 символов</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div id="text-progress" class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-center">
+                        <div class="relative w-24 h-24">
+                            <svg class="w-full h-full" viewBox="0 0 36 36">
+                                <path
+                                    d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#E5E7EB"
+                                    stroke-width="3"
+                                />
+                                <path
+                                    id="completion-ring"
+                                    d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#10B981"
+                                    stroke-width="3"
+                                    stroke-dasharray="100, 100"
+                                />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span id="completion-percent" class="text-lg font-bold text-gray-700">0%</span>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-sm text-gray-500 mb-1">Выявлено терминов: <span id="terms-count" class="font-medium">0</span></div>
+                            <div class="text-sm text-gray-500 mb-1">Создано карточек: <span id="cards-count" class="font-medium">0</span></div>
+                            <div class="text-sm text-gray-500">Сгенерировано вопросов: <span id="questions-count" class="font-medium">0</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="font-medium text-gray-800 mb-2">Действия</h3>
+                    <div class="space-y-2">
+                        <button id="export-anki-btn" class="w-full px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-opacity-90 transition flex items-center justify-center">
+                            <i class="fas fa-download mr-2"></i> Экспорт в Anki
+                        </button>
+                        <button id="export-pdf-btn" class="w-full px-4 py-2 bg-accent text-white rounded-lg hover:bg-opacity-90 transition flex items-center justify-center">
+                            <i class="fas fa-file-pdf mr-2"></i> Сохранить как PDF
+                        </button>
+                        <button id="share-btn" class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-opacity-90 transition flex items-center justify-center">
+                            <i class="fas fa-share-alt mr-2"></i> Поделиться
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Результаты -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Ключевые термины -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-primary text-white px-6 py-3">
+                    <h2 class="text-lg font-bold flex items-center">
+                        <i class="fas fa-key mr-2"></i> Ключевые термины
+                        <span id="terms-badge" class="ml-auto bg-white text-primary text-xs font-bold px-2 py-1 rounded-full">0</span>
+                    </h2>
+                </div>
+                <div class="p-4">
+                    <div id="key-terms" class="space-y-2 max-h-96 overflow-y-auto">
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-search fa-2x mb-2 opacity-50"></i>
+                            <p>Термины появятся после анализа</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center">
+                        <button id="copy-terms-btn" class="text-sm text-primary hover:underline flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Копировать все
+                        </button>
+                        <button id="save-terms-btn" class="text-sm text-primary hover:underline flex items-center">
+                            <i class="fas fa-save mr-1"></i> Сохранить
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Карточки -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-secondary text-white px-6 py-3">
+                    <h2 class="text-lg font-bold flex items-center">
+                        <i class="fas fa-id-card mr-2"></i> Карточки для запоминания
+                        <span id="cards-badge" class="ml-auto bg-white text-secondary text-xs font-bold px-2 py-1 rounded-full">0</span>
+                    </h2>
+                </div>
+                <div class="p-4">
+                    <div id="flashcards" class="space-y-4 max-h-96 overflow-y-auto">
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-id-card fa-2x mb-2 opacity-50"></i>
+                            <p>Карточки будут сгенерированы здесь</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center">
+                        <button id="shuffle-cards-btn" class="text-sm text-secondary hover:underline flex items-center">
+                            <i class="fas fa-random mr-1"></i> Перемешать
+                        </button>
+                        <button id="export-cards-btn" class="text-sm text-secondary hover:underline flex items-center">
+                            <i class="fas fa-external-link-alt mr-1"></i> Экспорт
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Вопросы -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-accent text-white px-6 py-3">
+                    <h2 class="text-lg font-bold flex items-center">
+                        <i class="fas fa-question-circle mr-2"></i> Контрольные вопросы
+                        <span id="questions-badge" class="ml-auto bg-white text-accent text-xs font-bold px-2 py-1 rounded-full">0</span>
+                    </h2>
+                </div>
+                <div class="p-4">
+                    <div id="quiz-questions" class="space-y-3 max-h-96 overflow-y-auto">
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-question fa-2x mb-2 opacity-50"></i>
+                            <p>Вопросы появятся после генерации</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex justify-between items-center">
+                        <button id="copy-questions-btn" class="text-sm text-accent hover:underline flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Копировать
+                        </button>
+                        <button id="test-mode-btn" class="text-sm text-accent hover:underline flex items-center">
+                            <i class="fas fa-play mr-1"></i> Тестовый режим
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для карточек -->
+        <div id="flashcard-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold">Просмотр карточки</h3>
+                    <button id="close-modal-btn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="modal-flashcard" class="flashcard w-full h-48 mb-4">
+                    <div class="flashcard-inner bg-white rounded-lg shadow-md cursor-pointer h-full">
+                        <div class="flashcard-front flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg h-full">
+                            <p id="modal-front" class="text-center text-lg"></p>
+                        </div>
+                        <div class="flashcard-back flex items-center justify-center p-4 border-2 border-primary rounded-lg bg-primary bg-opacity-10 h-full">
+                            <p id="modal-back" class="text-center text-lg"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between">
+                    <button id="prev-card-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                        <i class="fas fa-arrow-left mr-2"></i> Назад
+                    </button>
+                    <button id="flip-card-btn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90">
+                        <i class="fas fa-sync-alt mr-2"></i> Перевернуть
+                    </button>
+                    <button id="next-card-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                        Вперед <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-100 mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Умные Карточки</h3>
+                    <p class="text-gray-600">Сервис для создания учебных материалов из конспектов и лекций.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-4">Навигация</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 hover:text-primary transition">Главная</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-primary transition">Функции</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-primary transition">Примеры</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-primary transition">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-4">Ресурсы</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 hover:text-primary transition">Блог</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-primary transition">Документация</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-primary transition">API</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-4">Контакты</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-600"><i class="fas fa-envelope mr-2"></i> info@smartcards.edu</li>
+                        <li class="flex items-center text-gray-600"><i class="fas fa-phone mr-2"></i> +7 (123) 456-78-90</li>
+                        <li class="flex items-center text-gray-600"><i class="fab fa-telegram mr-2"></i> @smartcards_bot</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 mt-8 pt-6 text-center text-gray-500 text-sm">
+                <p>© 2025 Умные Карточки. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Основные элементы DOM
+        const notesInput = document.getElementById('notes');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const generateBtn = document.getElementById('generate-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const sampleBtn = document.getElementById('sample-btn');
+        const keyTermsContainer = document.getElementById('key-terms');
+        const flashcardsContainer = document.getElementById('flashcards');
+        const quizContainer = document.getElementById('quiz-questions');
+        
+        // Статистика
+        const textLengthSpan = document.getElementById('text-length');
+        const textProgress = document.getElementById('text-progress');
+        const termsCountSpan = document.getElementById('terms-count');
+        const cardsCountSpan = document.getElementById('cards-count');
+        const questionsCountSpan = document.getElementById('questions-count');
+        const completionPercent = document.getElementById('completion-percent');
+        const completionRing = document.getElementById('completion-ring');
+        
+        // Бейджи
+        const termsBadge = document.getElementById('terms-badge');
+        const cardsBadge = document.getElementById('cards-badge');
+        const questionsBadge = document.getElementById('questions-badge');
+        
+        // Модальное окно для карточек
+        const flashcardModal = document.getElementById('flashcard-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const modalFlashcard = document.getElementById('modal-flashcard');
+        const modalFront = document.getElementById('modal-front');
+        const modalBack = document.getElementById('modal-back');
+        const prevCardBtn = document.getElementById('prev-card-btn');
+        const nextCardBtn = document.getElementById('next-card-btn');
+        const flipCardBtn = document.getElementById('flip-card-btn');
+        
+        // Данные приложения
+        let terms = [];
+        let flashcards = [];
+        let questions = [];
+        let currentCardIndex = 0;
+        
+        // Пример конспекта
+        const sampleText = `Митохондрия - это двумембранная органелла, которая является энергетической станцией клетки. В ней происходит процесс клеточного дыхания, в результате которого синтезируется АТФ - универсальный источник энергии для всех биохимических процессов.
+
+Фотосинтез - это процесс преобразования света в химическую энергию органических соединений. Он происходит в хлоропластах растительных клеток и некоторых бактерий. Основное уравнение фотосинтеза:
+6CO2 + 6H2O → C6H12O6 + 6O2
+
+Клеточное дыхание - противоположный фотосинтезу процесс, при котором органические вещества окисляются с выделением энергии, запасаемой в молекулах АТФ.`;
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            
+            // Обработчики событий для основных кнопок
+            analyzeBtn.addEventListener('click', analyzeNotes);
+            generateBtn.addEventListener('click', generateMaterials);
+            clearBtn.addEventListener('click', clearAll);
+            sampleBtn.addEventListener('click', loadSample);
+            
+            // Обработчики для кнопок экспорта
+            document.getElementById('export-anki-btn').addEventListener('click', exportToAnki);
+            document.getElementById('export-pdf-btn').addEventListener('click', exportToPDF);
+            document.getElementById('share-btn').addEventListener('click', shareMaterials);
+            
+            // Обработчики для терминов
+            document.getElementById('copy-terms-btn').addEventListener('click', copyTerms);
+            document.getElementById('save-terms-btn').addEventListener('click', saveTerms);
+            
+            // Обработчики для карточек
+            document.getElementById('shuffle-cards-btn').addEventListener('click', shuffleCards);
+            document.getElementById('export-cards-btn').addEventListener('click', exportCards);
+            
+            // Обработчики для вопросов
+            document.getElementById('copy-questions-btn').addEventListener('click', copyQuestions);
+            document.getElementById('test-mode-btn').addEventListener('click', startTestMode);
+            
+            // Обработчики для модального окна
+            closeModalBtn.addEventListener('click', closeModal);
+            prevCardBtn.addEventListener('click', showPrevCard);
+            nextCardBtn.addEventListener('click', showNextCard);
+            flipCardBtn.addEventListener('click', flipCard);
+            modalFlashcard.addEventListener('click', flipCard);
+            
+            // Отслеживание изменений в тексте
+            notesInput.addEventListener('input', updateStats);
+        });
+        
+        // Функция анализа текста
+        function analyzeNotes() {
+    const notes = notesInput.value.trim();
+    if (!notes) {
+        showAlert('Пожалуйста, введите текст конспекта', 'error');
+        return;
+    }
+    
+    // Имитация загрузки
+    analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Анализ...';
+    analyzeBtn.disabled = true;
+    
+    setTimeout(() => {
+        // Улучшенное регулярное выражение для поиска терминов:
+        // 1. Слова с заглавной буквы в начале (русские и английские)
+        // 2. Слова в кавычках
+        // 3. Слова, написанные через дефис
+        // 4. Аббревиатуры (из заглавных букв)
+        const termPattern = /([А-ЯЁA-Z][а-яёa-z]+-?[А-ЯЁA-Zа-яёa-z]*)|"[^"]+"|\b[A-ZА-ЯЁ]{2,}\b/g;
+        const matches = notes.match(termPattern) || [];
+        
+        // Дополнительно находим существительные в именительном падеже (минимум 4 буквы)
+        const nounsPattern = /\b[А-Яа-яЁё]{4,}\b/g;
+        const nouns = notes.match(nounsPattern) || [];
+        
+        // Объединяем результаты и оставляем уникальные
+        terms = [...new Set([...matches, ...nouns])]
+            .filter(term => term.length > 3) // Отсеиваем слишком короткие
+            .slice(0, 25); // Ограничиваем количество
+        
+        // Обновляем интерфейс
+        renderTerms();
+        updateStats();
+        
+        analyzeBtn.innerHTML = '<i class="fas fa-search mr-2"></i> Анализировать';
+        analyzeBtn.disabled = false;
+        
+        if (terms.length === 0) {
+            showAlert('Не удалось выявить ключевые термины. Попробуйте более специализированный текст.', 'warning');
+        } else {
+            showAlert(`Выявлено ${terms.length} ключевых терминов`, 'success');
+        }
+    }, 1500);
+}
+       function getDefinitionForTerm(term, text) {
+    // Удаляем кавычки если они есть
+    const cleanTerm = term.replace(/"/g, '');
+    
+    // Ищем предложение, содержащее термин
+    const sentences = text.split(/[.!?]+/);
+    for (const sentence of sentences) {
+        if (new RegExp(`\\b${cleanTerm}\\b`, 'i').test(sentence)) {
+            // Нашли предложение с термином - пытаемся вычленить определение
+            const definition = sentence.trim();
+            
+            // Если термин в начале предложения - это вероятно определение
+            if (definition.startsWith(cleanTerm)) {
+                return definition;
+            }
+            
+            // Ищем конструкции типа "термин - это"
+            const definitionMatch = definition.match(new RegExp(`${cleanTerm}[\\s,—-]+(?:это|является|представляет собой)[\\s,—-]+([^,.]+)`));
+            if (definitionMatch) {
+                return definitionMatch[0];
+            }
+            
+            return definition;
+        }
+    }
+    
+    return null;
+} 
+        // Функция генерации материалов
+        function generateMaterials() {
+            const notes = notesInput.value.trim();
+            if (!notes) {
+                showAlert('Пожалуйста, введите текст конспекта', 'error');
+                return;
+            }
+            
+            if (terms.length === 0) {
+                showAlert('Сначала выполните анализ текста', 'error');
+                return;
+            }
+            
+            // Имитация загрузки
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Генерация...';
+            generateBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Генерация карточек
+                flashcards = terms.map(term => {
+                    // В реальном приложении здесь был бы более сложный алгоритм
+                    const definition = getDefinitionForTerm(term, notes);
+                    return {
+                        front: `Что такое "${term}"?`,
+                        back: definition || `Определение для "${term}"`
+                    };
+                });
+                
+                // Генерация вопросов
+                questions = generateQuestionsFromText(notes);
+                
+                // Обновляем интерфейс
+                renderFlashcards();
+                renderQuestions();
+                updateStats();
+                
+                generateBtn.innerHTML = '<i class="fas fa-magic mr-2"></i> Сгенерировать';
+                generateBtn.disabled = false;
+                
+                showAlert(`Создано ${flashcards.length} карточек и ${questions.length} вопросов`, 'success');
+            }, 2000);
+        }
+        
+        // Вспомогательная функция для генерации определений
+        function getDefinitionForTerm(term, text) {
+            const sentences = text.split(/[.!?]+/);
+            for (const sentence of sentences) {
+                if (sentence.includes(term)) {
+                    return sentence.trim();
+                }
+            }
+            return null;
+        }
+        
+        // Вспомогательная функция для генерации вопросов
+        function generateQuestionsFromText(text) {
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const generatedQuestions = [];
+    
+    // Шаблоны для генерации вопросов
+    const questionPatterns = [
+        { 
+            pattern: /([А-ЯЁA-Z][а-яёa-z]+)[\s,—-]+(?:это|является|представляет собой)[\s,—-]+([^,.]+)/i,
+            template: 'Что такое $1?'
+        },
+        {
+            pattern: /([А-ЯЁA-Z][а-яёa-z]+)[\s,—-]+выполняет функцию[\s,—-]+([^,.]+)/i,
+            template: 'Какую функцию выполняет $1?'
+        },
+        {
+            pattern: /процесс[\s,—-]+([^,.]{10,})/i,
+            template: 'Опишите процесс $1'
+        }
+    ];
+    
+    // Генерация вопросов по шаблонам
+    for (const sentence of sentences) {
+        for (const {pattern, template} of questionPatterns) {
+            const match = sentence.match(pattern);
+            if (match) {
+                let question = template;
+                for (let i = 1; i < match.length; i++) {
+                    question = question.replace(`$${i}`, match[i]);
+                }
+                generatedQuestions.push(question);
+                break;
+            }
+        }
+    }
+    
+    // Если вопросов мало - создаем общие
+    if (generatedQuestions.length < 3) {
+        terms.slice(0, 5).forEach(term => {
+            generatedQuestions.push(`Что вы знаете о "${term.replace(/"/g, '')}"?`);
+        });
+    }
+    
+    return generatedQuestions.slice(0, 5); // Ограничиваем количество вопросов
+}
+        
+        // Функция отображения терминов
+        function renderTerms() {
+            if (terms.length === 0) {
+                keyTermsContainer.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-search fa-2x mb-2 opacity-50"></i>
+                        <p>Термины появятся после анализа</p>
+                    </div>`;
+                return;
+            }
+            
+            keyTermsContainer.innerHTML = terms.map(term => `
+                <div class="p-3 bg-gray-50 rounded-lg border border-gray-200 mb-2 flex justify-between items-center">
+                    <span class="font-medium">${term}</span>
+                    <button class="text-primary hover:text-primary-dark" onclick="addFlashcardForTerm('${term}')">
+                        <i class="fas fa-plus-circle"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            termsBadge.textContent = terms.length;
+        }
+        
+        // Функция отображения карточек
+        function renderFlashcards() {
+            if (flashcards.length === 0) {
+                flashcardsContainer.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-id-card fa-2x mb-2 opacity-50"></i>
+                        <p>Карточки будут сгенерированы здесь</p>
+                    </div>`;
+                return;
+            }
+            
+            flashcardsContainer.innerHTML = flashcards.map((card, index) => `
+                <div class="flashcard w-full h-32 mb-3" onclick="openFlashcardModal(${index})">
+                    <div class="flashcard-inner bg-white rounded-lg shadow-sm cursor-pointer h-full">
+                        <div class="flashcard-front flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg h-full">
+                            <p class="text-center line-clamp-3">${card.front}</p>
+                        </div>
+                        <div class="flashcard-back flex items-center justify-center p-4 border-2 border-secondary rounded-lg bg-secondary bg-opacity-5 h-full">
+                            <p class="text-center line-clamp-3">${card.back}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            cardsBadge.textContent = flashcards.length;
+        }
+        
+        // Функция отображения вопросов
+        function renderQuestions() {
+            if (questions.length === 0) {
+                quizContainer.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-question fa-2x mb-2 opacity-50"></i>
+                        <p>Вопросы появятся после генерации</p>
+                    </div>`;
+                return;
+            }
+            
+            quizContainer.innerHTML = questions.map((question, i) => `
+                <div class="p-3 bg-gray-50 rounded-lg border border-gray-200 mb-2">
+                    <div class="font-medium mb-1">${i+1}. ${question}</div>
+                    <div class="flex justify-end">
+                        <button class="text-xs text-accent hover:underline" onclick="editQuestion(${i})">
+                            <i class="fas fa-edit mr-1"></i> Изменить
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            questionsBadge.textContent = questions.length;
+        }
+        
+        // Функция обновления статистики
+        function updateStats() {
+            const text = notesInput.value;
+            const length = text.length;
+            const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+            
+            textLengthSpan.textContent = `${length} символов, ${wordCount} слов`;
+            textProgress.style.width = `${Math.min(100, length / 5000 * 100)}%`;
+            
+            // Обновляем кольцо завершенности
+            const completion = calculateCompletion();
+            completionPercent.textContent = `${completion}%`;
+            const offset = 100 - completion;
+            completionRing.style.strokeDashoffset = offset;
+            
+            // Обновляем счетчики
+            termsCountSpan.textContent = terms.length;
+            cardsCountSpan.textContent = flashcards.length;
+            questionsCountSpan.textContent = questions.length;
+        }
+        
+        // Функция расчета завершенности
+        function calculateCompletion() {
+            let completion = 0;
+            if (notesInput.value.trim().length > 100) completion += 30;
+            if (terms.length > 0) completion += 20;
+            if (flashcards.length > 0) completion += 30;
+            if (questions.length > 0) completion += 20;
+            return Math.min(100, completion);
+        }
+        
+        // Функция очистки
+        function clearAll() {
+            notesInput.value = '';
+            terms = [];
+            flashcards = [];
+            questions = [];
+            renderTerms();
+            renderFlashcards();
+            renderQuestions();
+            updateStats();
+            showAlert('Все данные очищены', 'info');
+        }
+        
+        // Функция загрузки примера
+        function loadSample() {
+            notesInput.value = sampleText;
+            updateStats();
+            showAlert('Загружен пример конспекта', 'info');
+        }
+        
+        // Функции экспорта
+        function exportToAnki() {
+            if (flashcards.length === 0) {
+                showAlert('Нет карточек для экспорта', 'error');
+                return;
+            }
+            
+            // Формируем текст для экспорта
+            const ankiText = flashcards.map(card => 
+                `${card.front}\t${card.back}`
+            ).join('\n');
+            
+            // Создаем временный элемент для скачивания
+            const blob = new Blob([ankiText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'anki_cards.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showAlert('Карточки экспортированы для Anki', 'success');
+        }
+        
+        function exportToPDF() {
+            showAlert('Экспорт в PDF в разработке', 'info');
+        }
+        
+        function shareMaterials() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Мои учебные материалы',
+                    text: 'Я создал(а) учебные карточки с помощью "Умные Карточки"',
+                    url: window.location.href
+                }).catch(err => {
+                    console.log('Ошибка sharing:', err);
+                });
+            } else {
+                showAlert('Функция "Поделиться" доступна в мобильных браузерах', 'info');
+            }
+        }
+        
+        // Функции работы с терминами
+        function copyTerms() {
+            if (terms.length === 0) {
+                showAlert('Нет терминов для копирования', 'error');
+                return;
+            }
+            
+            navigator.clipboard.writeText(terms.join('\n'))
+                .then(() => showAlert('Термины скопированы в буфер', 'success'))
+                .catch(err => showAlert('Не удалось скопировать термины', 'error'));
+        }
+        
+        function saveTerms() {
+            showAlert('Сохранение терминов в разработке', 'info');
+        }
+        
+        // Функции работы с карточками
+        function shuffleCards() {
+            if (flashcards.length === 0) {
+                showAlert('Нет карточек для перемешивания', 'error');
+                return;
+            }
+            
+            for (let i = flashcards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+            }
+            
+            renderFlashcards();
+            showAlert('Карточки перемешаны', 'success');
+        }
+        
+        function exportCards() {
+            showAlert('Экспорт карточек в разработке', 'info');
+        }
+        
+        // Функции работы с вопросами
+        function copyQuestions() {
+            if (questions.length === 0) {
+                showAlert('Нет вопросов для копирования', 'error');
+                return;
+            }
+            
+            const questionsText = questions.map((q, i) => `${i+1}. ${q}`).join('\n');
+            navigator.clipboard.writeText(questionsText)
+                .then(() => showAlert('Вопросы скопированы в буфер', 'success'))
+                .catch(err => showAlert('Не удалось скопировать вопросы', 'error'));
+        }
+        
+        function startTestMode() {
+            showAlert('Тестовый режим в разработке', 'info');
+        }
+        
+        // Функции модального окна карточек
+        function openFlashcardModal(index) {
+            if (flashcards.length === 0) return;
+            
+            currentCardIndex = index;
+            updateModalCard();
+            flashcardModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            flashcardModal.classList.add('hidden');
+            document.body.style.overflow = '';
+            modalFlashcard.classList.remove('flipped');
+        }
+        
+        function showPrevCard() {
+            if (flashcards.length === 0) return;
+            currentCardIndex = (currentCardIndex - 1 + flashcards.length) % flashcards.length;
+            updateModalCard();
+            modalFlashcard.classList.remove('flipped');
+        }
+        
+        function showNextCard() {
+            if (flashcards.length === 0) return;
+            currentCardIndex = (currentCardIndex + 1) % flashcards.length;
+            updateModalCard();
+            modalFlashcard.classList.remove('flipped');
+        }
+        
+        function flipCard() {
+            modalFlashcard.classList.toggle('flipped');
+        }
+        
+        function updateModalCard() {
+            if (currentCardIndex >= 0 && currentCardIndex < flashcards.length) {
+                const card = flashcards[currentCardIndex];
+                modalFront.textContent = card.front;
+                modalBack.textContent = card.back;
+            }
+        }
+        
+        // Вспомогательные функции
+        function showAlert(message, type = 'info') {
+            const types = {
+                info: { bg: 'bg-blue-100', text: 'text-blue-800', icon: 'fa-info-circle' },
+                success: { bg: 'bg-green-100', text: 'text-green-800', icon: 'fa-check-circle' },
+                error: { bg: 'bg-red-100', text: 'text-red-800', icon: 'fa-exclamation-circle' },
+                warning: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: 'fa-exclamation-triangle' }
+            };
+            
+            const alertType = types[type] || types.info;
+            const alertId = `alert-${Date.now()}`;
+            
+            const alertHTML = `
+                <div id="${alertId}" class="fixed top-4 right-4 ${alertType.bg} ${alertType.text} border-l-4 border-${type}-500 p-4 rounded-lg shadow-lg max-w-sm z-50 transition-all duration-300 transform translate-x-0 opacity-100">
+                    <div class="flex items-center">
+                        <i class="fas ${alertType.icon} mr-3"></i>
+                        <div class="flex-1">${message}</div>
+                        <button onclick="document.getElementById('${alertId}').remove()" class="ml-4 text-${type}-500 hover:text-${type}-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>`;
+            
+            document.body.insertAdjacentHTML('beforeend', alertHTML);
+            
+            setTimeout(() => {
+                const alertElement = document.getElementById(alertId);
+                if (alertElement) {
+                    alertElement.remove();
+                }
+            }, 5000);
+        }
+        
+        // Глобальные функции для использования в HTML
+        window.addFlashcardForTerm = function(term) {
+            const definition = getDefinitionForTerm(term, notesInput.value) || `Определение для "${term}"`;
+            flashcards.push({
+                front: `Что такое "${term}"?`,
+                back: definition
+            });
+            renderFlashcards();
+            updateStats();
+            showAlert(`Карточка для термина "${term}" добавлена`, 'success');
+        };
+        
+        window.editQuestion = function(index) {
+            const newQuestion = prompt('Измените вопрос:', questions[index]);
+            if (newQuestion !== null) {
+                questions[index] = newQuestion;
+                renderQuestions();
+                showAlert('Вопрос обновлен', 'success');
+            }
+        };
+        
+        window.openFlashcardModal = openFlashcardModal;
+    </script>
+</body>
+</html>
